@@ -6,4 +6,4 @@ Example:
 Source:
 [[https://github.com/apexman/image-to-asccii-text/blob/master/example/clint-eastwood.jpg]]
 Converted:
-[[https://github.com/apexman/image-to-asccii-text/tree/master/examples/converted.jpg|alt=converted]]
+[[https://github.com/apexman/image-to-asccii-text/blob/master/example/converted.png]]
