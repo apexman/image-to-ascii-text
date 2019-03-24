@@ -7,3 +7,4 @@ Source:
 [[https://github.com/apexman/image-to-asccii-text/blob/master/example/clint-eastwood.jpg]]
 Converted:
 [[https://github.com/apexman/image-to-asccii-text/blob/master/example/converted.png]]
+![converted](https://github.com/apexman/image-to-asccii-text/blob/master/example/converted.png)
