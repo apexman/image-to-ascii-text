@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="image-to-ascii:jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/image_to_ascii_jar</output-path>
-    <root id="archive" name="image-to-ascii.jar">
-      <element id="module-output" name="image-to-ascii" />
-    </root>
-  </artifact>
-</component>
