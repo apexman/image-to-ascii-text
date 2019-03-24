@@ -4,6 +4,6 @@ Source: https://www.youtube.com/watch?v=q_m-YYGWAvg
 
 Example:
 Source:
-[[https://github.com/apexman/image-to-asccii-text/tree/master/examples/clint-eastwood.jpg|alt=clint-eastwood]]
+[https://github.com/apexman/image-to-asccii-text/tree/master/examples/clint-eastwood.jpg|alt=clint-eastwood]
 Converted:
 [[https://github.com/apexman/image-to-asccii-text/tree/master/examples/converted.jpg|alt=converted]]
