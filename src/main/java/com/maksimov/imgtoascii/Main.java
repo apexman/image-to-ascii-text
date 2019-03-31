@@ -25,15 +25,23 @@ public class Main {
 		BufferedImage image = ImageIO.read(imageFile);
 
 		ImageConverter imageConverter = new ImageConverter();
-		imageConverter.convertToASCII(image);
+//		imageConverter.convertToASCII(image);
+		imageConverter.convertToImageASCII(image);
 
 		File outputfile = new File("" + "converted.png");
 		ImageIO.write(image, "png", outputfile);
+
+//		String inputFilename = "/home/alex/Desktop/love_death_robots.mp4";
+//		VideoConverter videoConverter = new VideoConverter();
+//		videoConverter.convertToAsciiVideo(inputFilename);
 	}
 
 	private static File parseArgs(String[] args) throws IOException {
 		if (args == null || args.length == 0) {
-			throw new RuntimeException("Args must be specified. Enter -h for help");
+			String path = Main.class.getResource("/drhouse.jpg").getPath();
+			System.out.println(path);
+			return new File(path);
+//			throw new RuntimeException("Args must be specified. Enter -h for help");
 		}
 
 		for (int i = 0; i < args.length; i++) {
