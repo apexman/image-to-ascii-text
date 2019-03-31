@@ -25,8 +25,8 @@ public class Main {
 		BufferedImage image = ImageIO.read(imageFile);
 
 		ImageConverter imageConverter = new ImageConverter();
-//		imageConverter.convertToASCII(image);
-		imageConverter.convertToImageASCII(image);
+		imageConverter.convertToASCII(image);
+//		imageConverter.convertToImageASCII(image);
 
 		File outputfile = new File("" + "converted.png");
 		ImageIO.write(image, "png", outputfile);

@@ -32,9 +32,9 @@ public class ImageConverter {
         xResolution = asciiImageExample.getWidth();
         yResolution = asciiImageExample.getHeight();
 
-        convertToGrey(image);
+        image = convertToGrey(image);
 
-        convertToLowResolution(image);
+        image = convertToLowResolution(image);
 
         int imageWidth = image.getWidth();
         int imageHeight = image.getHeight();
@@ -65,16 +65,16 @@ public class ImageConverter {
 
             ImageIO.write(resultImage, "png", new File(path));
 
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
+            logger.debug("Done");
 
-        logger.debug("Done");
+        } catch (IOException ex) {
+            logger.error(ex.getMessage(), ex);
+        }
 
         return resultImage;
     }
 
-    public void convertToASCII(BufferedImage image) throws IOException {
+    public File convertToASCII(BufferedImage image) throws IOException {
         logger.debug("Convert to ASCII");
 
         logger.debug("Choose the size (in px) that an ASCII character will represent");
@@ -88,9 +88,9 @@ public class ImageConverter {
         xResolution = i1;
         yResolution = 2 * xResolution;
 
-        convertToGrey(image);
+        image = convertToGrey(image);
 
-        convertToLowResolution(image);
+        image = convertToLowResolution(image);
 
         String path = "savedASCII.txt";
         File file = new File(path);
@@ -119,10 +119,14 @@ public class ImageConverter {
         }
 
         logger.debug("Done conversion to ASCII");
+
+        return file;
     }
 
-    public void convertToGrey(BufferedImage image) {
+    public BufferedImage convertToGrey(BufferedImage image) {
         logger.debug("Convert to grey");
+
+        BufferedImage result = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
 
         int width = image.getWidth();
         int height = image.getHeight();
@@ -139,15 +143,20 @@ public class ImageConverter {
 
                 Color greyColor = new Color(converted, converted, converted);
 
-                image.setRGB(i, j, greyColor.getRGB());
+                result.setRGB(i, j, greyColor.getRGB());
             }
         }
 
         logger.debug("Done conversion to grey");
+
+        return result;
     }
 
-    public void convertToLowResolution(BufferedImage image) {
+    public BufferedImage convertToLowResolution(BufferedImage image) {
         logger.debug("Convert to low resolution");
+
+        BufferedImage compressedImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
+
         int grey = 0;
         for (int i = 0; i < image.getWidth(); i += xResolution) {
             for (int j = 0; j < image.getHeight(); j += yResolution) {
@@ -165,13 +174,15 @@ public class ImageConverter {
                 for (int x = 0; x < xResolution; x++) {
                     for (int y = 0; y < yResolution; y++) {
                         if ((i + x) < image.getWidth() && (j + y) < image.getHeight()) {
-                            image.setRGB(i + x, j + y, (new Color(grey, grey, grey).getRGB()));
+                            compressedImage.setRGB(i + x, j + y, (new Color(grey, grey, grey).getRGB()));
                         }
                     }
                 }
             }
         }
         logger.debug("Done conversion to low resolution");
+
+        return compressedImage;
     }
 
     private BufferedImage getCorrespondingAsciiCharAsImage(int grey) {
