@@ -25,7 +25,7 @@ public class ImageConverter {
     private String among = "@08OCocui|/;:,'. ";
 
     public BufferedImage convertToImageASCII(BufferedImage image) {
-        System.out.println("Convert ti ASCII image");
+        logger.debug("Convert ti ASCII image");
 
         BufferedImage asciiImageExample = getCorrespondingAsciiCharAsImage(0);
 
@@ -69,15 +69,15 @@ public class ImageConverter {
             ex.printStackTrace();
         }
 
-        System.out.println("Done");
+        logger.debug("Done");
 
         return resultImage;
     }
 
     public void convertToASCII(BufferedImage image) throws IOException {
-        System.out.println("Convert to ASCII");
+        logger.debug("Convert to ASCII");
 
-        System.out.println("Choose the size (in px) that an ASCII character will represent");
+        logger.debug("Choose the size (in px) that an ASCII character will represent");
         Scanner scanner = new Scanner(System.in);
         int i1 = scanner.nextInt();
 
@@ -118,11 +118,11 @@ public class ImageConverter {
             }
         }
 
-        System.out.println("Done conversion to ASCII");
+        logger.debug("Done conversion to ASCII");
     }
 
     public void convertToGrey(BufferedImage image) {
-        System.out.println("Convert to grey");
+        logger.debug("Convert to grey");
 
         int width = image.getWidth();
         int height = image.getHeight();
@@ -143,11 +143,11 @@ public class ImageConverter {
             }
         }
 
-        System.out.println("Done conversion to grey");
+        logger.debug("Done conversion to grey");
     }
 
     public void convertToLowResolution(BufferedImage image) {
-        System.out.println("Convert to low resolution");
+        logger.debug("Convert to low resolution");
         int grey = 0;
         for (int i = 0; i < image.getWidth(); i += xResolution) {
             for (int j = 0; j < image.getHeight(); j += yResolution) {
@@ -171,7 +171,7 @@ public class ImageConverter {
                 }
             }
         }
-        System.out.println("Done conversion to low resolution");
+        logger.debug("Done conversion to low resolution");
     }
 
     private BufferedImage getCorrespondingAsciiCharAsImage(int grey) {
