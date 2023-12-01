@@ -1,19 +1,11 @@
-//todo  impl
-//package com.maksimov.imgtoascii;
-//
-//import com.xuggle.mediatool.IMediaReader;
-//import com.xuggle.mediatool.IMediaWriter;
-//import com.xuggle.mediatool.MediaListenerAdapter;
-//import com.xuggle.mediatool.ToolFactory;
-//import com.xuggle.mediatool.event.ICloseEvent;
-//import com.xuggle.mediatool.event.IVideoPictureEvent;
-//import com.xuggle.xuggler.Global;
-//import com.xuggle.xuggler.ICodec;
-//
-//import java.awt.image.BufferedImage;
-//import java.util.concurrent.TimeUnit;
-//
-//public class VideoConverter {
+package com.maksimov.imgtoascii;
+
+import java.awt.image.BufferedImage;
+import java.util.Objects;
+import java.util.concurrent.TimeUnit;
+
+//TODO  impl
+public class VideoConverter implements Converter<Object, Object> {
 //    private final double SECONDS_BETWEEN_FRAMES = 0.1;
 //
 //    private final String outputFileName = "convertedVideo.mp4";
@@ -31,8 +23,12 @@
 //            (long)(Global.DEFAULT_PTS_PER_SECOND);
 //
 //    private final ImageConverter imageConverter = new ImageConverter();
-//
-//    public void convertToAsciiVideo(String filePath) {
+
+    @Override
+    public Object convert(Object filePath) {
+        if (true) {
+            throw new UnsupportedOperationException();
+        }
 //
 //        IMediaReader mediaReader = ToolFactory.makeReader(filePath);
 //
@@ -44,9 +40,9 @@
 //        // read out the contents of the media file and
 //        // dispatch events to the attached listener
 //        while (mediaReader.readPacket() == null) ;
-//
-//    }
-//
+        return null;
+    }
+
 //    private class ImageSnapListener extends MediaListenerAdapter {
 //        private IMediaWriter writer = ToolFactory.makeWriter(outputFileName);
 //
@@ -130,5 +126,5 @@
 //
 //
 //    }
-//
-//}
+
+}
