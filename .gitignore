@@ -59,6 +59,9 @@ cmake-build-release/
 
 # IntelliJ
 out/
+target/
+*.iml
+temp
 
 # mpeltonen/sbt-idea plugin
 .idea_modules/

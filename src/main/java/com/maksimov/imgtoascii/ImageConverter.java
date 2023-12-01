@@ -11,21 +11,26 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
-import java.util.Scanner;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class ImageConverter {
-    private Logger logger = LoggerFactory.getLogger(ImageConverter.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(ImageConverter.class);
+    private static final double RED_COEFF = 0.2125;
+    private static final double GREEN_COEFF = 0.7154;
+    private static final double BLUE_COEFF = 0.0721;
+    private static final String ACCEPTABLE_CHARACTERS = "@08OCocui|/;:,'. ";
 
-    private double RED_COEFF = 0.2125;
-    private double GREEN_COEFF = 0.7154;
-    private double BLUE_COEFF = 0.0721;
+    private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd--HH-mm-ss-ms");
 
     private int xResolution = 1;
     private int yResolution = 2 * xResolution;
-    private String among = "@08OCocui|/;:,'. ";
 
-    public BufferedImage convertToImageASCII(BufferedImage image) {
-        logger.debug("Convert ti ASCII image");
+    public BufferedImage convertToImageAscii(BufferedImage image) throws IOException {
+        LOGGER.debug("Convert ti ASCII image");
 
         BufferedImage asciiImageExample = getCorrespondingAsciiCharAsImage(0);
 
@@ -44,87 +49,38 @@ public class ImageConverter {
         graphics.fillRect(0, 0, imageWidth, imageHeight);
         graphics.setColor(Color.BLACK);
 
-        try {
-            String path = "savedImageASCII.png";
+        String path = String.format("temp/savedImageASCII-%s.png", LocalDateTime.now());
+        BufferedImage asciiImage;
+        for (int j = 0; j < imageHeight; j += yResolution) {
+            for (int i = 0; i < imageWidth; i += xResolution) {
+                int imageRGB = image.getRGB(i, j);
+                Color c = new Color(imageRGB);
+                int red = c.getRed();
 
-            BufferedImage asciiImage;
+                asciiImage = getCorrespondingAsciiCharAsImage(red);
 
-            for (int j = 0; j < imageHeight; j += yResolution) {
-                for (int i = 0; i < imageWidth; i += xResolution) {
-                    int imageRGB = image.getRGB(i, j);
-                    Color c = new Color(imageRGB);
-                    int red = c.getRed();
-
-                    asciiImage = getCorrespondingAsciiCharAsImage(red);
-
-                    graphics.drawImage(asciiImage, i, j, null);
-                }
+                graphics.drawImage(asciiImage, i, j, null);
             }
-
-            graphics.dispose();
-
-            ImageIO.write(resultImage, "png", new File(path));
-
-            logger.debug("Done");
-
-        } catch (IOException ex) {
-            logger.error(ex.getMessage(), ex);
         }
+        graphics.dispose();
+        ImageIO.write(resultImage, "png", new File(path));
+        LOGGER.debug("Done");
 
         return resultImage;
     }
 
-    public File convertToASCII(BufferedImage image) throws IOException {
-        logger.debug("Convert to ASCII");
-
-        logger.debug("Choose the size (in px) that an ASCII character will represent");
-        Scanner scanner = new Scanner(System.in);
-        int i1 = scanner.nextInt();
-
-        if (i1 <= 0) {
-            throw new IllegalArgumentException("Resolution number must be positive and integer");
-        }
-
-        xResolution = i1;
-        yResolution = 2 * xResolution;
-
+    public File convertToAcsii(BufferedImage image) throws IOException {
+        LOGGER.debug("Convert to ASCII");
+        LOGGER.debug("Choose the size (in px) that an ASCII character will represent");
         image = convertToGrey(image);
-
         image = convertToLowResolution(image);
-
-        String path = "savedASCII.txt";
-        File file = new File(path);
-        try (
-                FileOutputStream fileOutputStream = new FileOutputStream(file);
-                FileChannel fileChannel = fileOutputStream.getChannel()
-        ) {
-
-            StringBuilder asciiString = new StringBuilder();
-            for (int j = 0; j < image.getHeight(); j += yResolution) {
-                for (int i = 0; i < image.getWidth(); i += xResolution) {
-                    int imageRGB = image.getRGB(i, j);
-                    Color c = new Color(imageRGB);
-                    int red = c.getRed();
-
-                    asciiString.append(getCorrespondingAsciiChar(red));
-                }
-                asciiString.append("\n");
-
-                byte[] bytes = asciiString.toString().getBytes();
-                ByteBuffer buffer = ByteBuffer.wrap(bytes);
-                fileChannel.write(buffer);
-
-                asciiString = new StringBuilder();
-            }
-        }
-
-        logger.debug("Done conversion to ASCII");
-
+        File file = convertToTextFile(image);
+        LOGGER.debug("Conversion done to ASCII");
         return file;
     }
 
-    public BufferedImage convertToGrey(BufferedImage image) {
-        logger.debug("Convert to grey");
+    private BufferedImage convertToGrey(BufferedImage image) {
+        LOGGER.debug("Convert to grey");
 
         BufferedImage result = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
 
@@ -147,16 +103,14 @@ public class ImageConverter {
             }
         }
 
-        logger.debug("Done conversion to grey");
+        LOGGER.debug("Conversion done to grey");
 
         return result;
     }
 
-    public BufferedImage convertToLowResolution(BufferedImage image) {
-        logger.debug("Convert to low resolution");
-
+    private BufferedImage convertToLowResolution(BufferedImage image) {
+        LOGGER.debug("Convert to low resolution");
         BufferedImage compressedImage = new BufferedImage(image.getWidth(), image.getHeight(), BufferedImage.TYPE_INT_ARGB);
-
         int grey = 0;
         for (int i = 0; i < image.getWidth(); i += xResolution) {
             for (int j = 0; j < image.getHeight(); j += yResolution) {
@@ -180,9 +134,36 @@ public class ImageConverter {
                 }
             }
         }
-        logger.debug("Done conversion to low resolution");
-
+        LOGGER.debug("Conversion done to low resolution");
         return compressedImage;
+    }
+
+    private File convertToTextFile(BufferedImage image) throws IOException {
+        String path1 = String.format("temp/savedASCII-%s.txt", dateTimeFormatter.format(LocalDateTime.now()));
+        Path path = Paths.get(path1);
+        Files.createDirectories(path.getParent());
+        File file = new File(path1);
+        try (
+                FileOutputStream fileOutputStream = new FileOutputStream(file);
+                FileChannel fileChannel = fileOutputStream.getChannel()
+        ) {
+
+            StringBuilder asciiString = new StringBuilder();
+            for (int j = 0; j < image.getHeight(); j += yResolution) {
+                for (int i = 0; i < image.getWidth(); i += xResolution) {
+                    int imageRGB = image.getRGB(i, j);
+                    Color c = new Color(imageRGB);
+                    int red = c.getRed();
+                    asciiString.append(getCorrespondingAsciiChar(red));
+                }
+                asciiString.append("\n");
+                byte[] bytes = asciiString.toString().getBytes();
+                ByteBuffer buffer = ByteBuffer.wrap(bytes);
+                fileChannel.write(buffer);
+                asciiString = new StringBuilder();
+            }
+        }
+        return file;
     }
 
     private BufferedImage getCorrespondingAsciiCharAsImage(int grey) {
@@ -210,8 +191,8 @@ public class ImageConverter {
 
     private String getCorrespondingAsciiChar(int grey) {
         double coeff = grey / 255.0;
-        int index = (int) (coeff * (double) among.length());
-        char c = among.charAt(index);
+        int index = (int) (coeff * ACCEPTABLE_CHARACTERS.length());
+        char c = ACCEPTABLE_CHARACTERS.charAt(index);
         return String.valueOf(c);
     }
 
