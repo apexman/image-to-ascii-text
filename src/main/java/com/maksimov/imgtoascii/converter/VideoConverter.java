@@ -1,8 +1,4 @@
-package com.maksimov.imgtoascii;
-
-import java.awt.image.BufferedImage;
-import java.util.Objects;
-import java.util.concurrent.TimeUnit;
+package com.maksimov.imgtoascii.converter;
 
 //TODO  impl
 public class VideoConverter implements Converter<Object, Object> {

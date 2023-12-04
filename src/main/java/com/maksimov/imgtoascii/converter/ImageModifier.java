@@ -1,4 +1,4 @@
-package com.maksimov.imgtoascii;
+package com.maksimov.imgtoascii.converter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,18 +22,12 @@ public class ImageModifier {
             for (int j = 0; j < height; j++) {
                 int imageRGB = image.getRGB(i, j);
                 Color c = new Color(imageRGB);
-                int red = c.getRed();
-                int green = c.getGreen();
-                int blue = c.getBlue();
-
-                int converted = (int) (red * RED_COEFF + green * GREEN_COEFF + blue * BLUE_COEFF);
-
+                int converted = (int) (c.getRed() * RED_COEFF + c.getGreen() * GREEN_COEFF + c.getBlue() * BLUE_COEFF);
                 Color greyColor = new Color(converted, converted, converted);
-
                 result.setRGB(i, j, greyColor.getRGB());
             }
         }
-        LOGGER.debug("Conversion done to grey");
+        LOGGER.debug("Conversion to grey done");
         return result;
     }
 
@@ -48,11 +42,9 @@ public class ImageModifier {
                         int imageRGB = image.getRGB(i, j);
                         Color c = new Color(imageRGB);
                         int red = c.getRed();
-
                         grey += red;
                     }
                 }
-
                 grey /= xResolution * yResolution + 1;
                 for (int x = 0; x < xResolution; x++) {
                     for (int y = 0; y < yResolution; y++) {

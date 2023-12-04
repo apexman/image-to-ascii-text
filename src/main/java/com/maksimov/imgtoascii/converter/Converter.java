@@ -1,4 +1,4 @@
-package com.maksimov.imgtoascii;
+package com.maksimov.imgtoascii.converter;
 
 import java.io.IOException;
 

@@ -1,8 +1,9 @@
-package com.maksimov.imgtoascii;
+package com.maksimov.imgtoascii.converter;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
@@ -16,7 +17,7 @@ import java.nio.file.Paths;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
-public class ImageToTextConverter implements Converter<BufferedImage, File> {
+public class ImageToTextConverter implements Converter<File, File> {
     private static final Logger LOGGER = LoggerFactory.getLogger(ImageToTextConverter.class);
 
     private final DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd--HH-mm-ss-ms");
@@ -25,12 +26,13 @@ public class ImageToTextConverter implements Converter<BufferedImage, File> {
     private final ImageModifier imageModifier = new ImageModifier();
 
     @Override
-    public File convert(BufferedImage input) throws IOException {
+    public File convert(File input) throws IOException {
         LOGGER.debug("Convert to ASCII");
         LOGGER.debug("Choose the size (in px) that an ASCII character will represent");
-        input = imageModifier.convertToGrey(input);
-        input = imageModifier.convertToLowResolution(input, xResolution, yResolution);
-        File file = convertToTextFile(input);
+        BufferedImage image = ImageIO.read(input);
+        image = imageModifier.convertToGrey(image);
+        image = imageModifier.convertToLowResolution(image, xResolution, yResolution);
+        File file = convertToTextFile(image);
         LOGGER.debug("Conversion done to ASCII");
         return file;
     }
