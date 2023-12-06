@@ -5,12 +5,11 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.Timeout;
 
-import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.InputStream;
 import java.security.MessageDigest;
-import java.util.Objects;
 
 class ImageToTextConverterTest {
     private final ImageToTextConverter converter = new ImageToTextConverter();
@@ -18,21 +17,21 @@ class ImageToTextConverterTest {
     @Test
     @Timeout(10)
     void whenLittlePicToAscii() throws IOException {
-        File image = converter.convert(getFile("files/img.png"));
+        InputStream image = converter.convert(getInputStream("files/img.png"));
 
-        byte[] expectedBytes = Files.readAllBytes(Paths.get(getFile("files/imgExpected.txt").toURI()));
-        byte[] resultBytes = Files.readAllBytes(Paths.get(image.toURI()));
+        byte[] expectedBytes = getInputStream("files/imgExpected.txt").readAllBytes();
+        byte[] resultBytes = image.readAllBytes();
         Assertions.assertTrue(MessageDigest.isEqual(expectedBytes, resultBytes));
     }
 
     @Test
     @Timeout(10)
     void whenBigPicToAscii() throws IOException {
-        File image = converter.convert(getFile("files/drhouse.jpg"));
+        InputStream image = converter.convert(getInputStream("files/drhouse.jpg"));
         Assertions.assertNotNull(image);
     }
 
-    private File getFile(String filePath) {
-        return new File(Objects.requireNonNull(getClass().getClassLoader().getResource(filePath)).getFile());
+    private FileInputStream getInputStream(String filePath) throws FileNotFoundException {
+        return new FileInputStream(getClass().getClassLoader().getResource(filePath).getFile());
     }
 }

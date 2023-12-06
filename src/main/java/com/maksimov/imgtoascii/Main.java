@@ -7,6 +7,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -24,11 +25,10 @@ public class Main {
         ArrayList<Long> durations = new ArrayList<>();
         for (int i = 0; i < 100; i++) {
             var start = System.nanoTime();
-            File converted = imageToTextConverter.convert(file);
+            imageToTextConverter.convert(new FileInputStream(file));
             long duration = (System.nanoTime() - start) / 1_000_000;
             durations.add(duration);
             LOGGER.info("{} ms", duration);
-            converted.deleteOnExit();
         }
         LOGGER.info("Median: {} ms", median(durations));
     }
